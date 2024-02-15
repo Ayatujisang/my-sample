@@ -16,6 +16,7 @@ import java.io.IOException;
  *
  * 登入拦截器
  */
+@SuppressWarnings("all")
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private AntPathRequestMatcher pathMatcher;
@@ -37,11 +38,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
      * @param response
      * @return
      * @throws AuthenticationException
-     * @throws IOException
-     * @throws ServletException
      */
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+            throws AuthenticationException {
         return null;
     }
 }

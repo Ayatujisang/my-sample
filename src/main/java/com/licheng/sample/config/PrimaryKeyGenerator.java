@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
  *
  * mybatilsPlus的自定义主键生成工具
  */
-public class CustomIdGenerator implements IdentifierGenerator  {
+public class PrimaryKeyGenerator implements IdentifierGenerator  {
 
     @Override
     public Number nextId(Object entity) {
@@ -59,7 +59,7 @@ public class CustomIdGenerator implements IdentifierGenerator  {
     /**
      * 构造方法 校验配置文件中配置的参数是否超过限制
      */
-    private CustomIdGenerator() {
+    private PrimaryKeyGenerator() {
         if (DATA_CENTER_ID > MAX_DATACENTER_NUM || DATA_CENTER_ID < 0) {
             throw new IllegalArgumentException("Datacenter Id cannot be greater than " + MAX_DATACENTER_NUM + " or less than 0");
         }

@@ -1,5 +1,6 @@
 package com.licheng.sample.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.licheng.sample.entity.UserEntity;
 import com.licheng.sample.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,5 +25,26 @@ public class UserService {
      */
     public void createUser(UserEntity user) {
         userMapper.insert(user);
+    }
+
+    public UserEntity selectByUserName(String userName) {
+        UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().lambda()
+                .eq(UserEntity::getUserName, userName));
+        return userEntity;
+    }
+
+    public boolean existsByUserName(String userName) {
+        return userMapper.exists(new QueryWrapper<UserEntity>().lambda()
+                .eq(UserEntity::getUserName, userName));
+    }
+
+    public boolean existsByNickName(String nickName) {
+        return userMapper.exists(new QueryWrapper<UserEntity>().lambda()
+                .eq(UserEntity::getNickName, nickName));
+    }
+
+    public boolean existsByPhone(String phone) {
+        return userMapper.exists(new QueryWrapper<UserEntity>().lambda()
+                .eq(UserEntity::getPhone, phone));
     }
 }

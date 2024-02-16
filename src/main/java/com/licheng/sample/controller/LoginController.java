@@ -3,12 +3,8 @@ package com.licheng.sample.controller;
 import com.alibaba.fastjson2.JSONObject;
 import com.licheng.sample.entity.UserEntity;
 import com.licheng.sample.service.UserService;
-import com.licheng.sample.utils.AESUtils;
-import com.licheng.sample.utils.PatternUtils;
-import com.licheng.sample.utils.ResponseUtil;
-import com.licheng.sample.utils.UtilValidate;
+import com.licheng.sample.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -35,13 +30,13 @@ import java.util.UUID;
 @RestController
 public class LoginController {
 
-    @Value("${lc.config.login.captchaKey}")
-    private String captchaKey;
+/*    @Value("${lc.config.login.captchaKey}")
+    private String captchaKey;*/
 
     @Autowired
     private UserService userService;
 
-    @PostMapping("/success")
+    @RequestMapping("/success")
     public JSONObject loginSuccess() {
         return ResponseUtil.makeSuccessResponse("登录成功");
     }
@@ -82,7 +77,7 @@ public class LoginController {
         StringBuilder sb = new StringBuilder();
         // 往图片上画
         int p = 15;
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 6; i++) {
             int code = random.nextInt(10);
             sb.append(code);
             graphics.drawString(code + "", p, 30);
@@ -90,7 +85,12 @@ public class LoginController {
         }
         //生成验证码
         String vcode = sb.toString();
-        request.getSession().setAttribute(captchaKey, vcode);
+
+        //这里存session版本
+//        request.getSession().setAttribute(captchaKey, vcode);
+
+        //存redis版本 给验证码加了有效期 2分钟有效期
+        RedisUtils.setForExpMinute(request.getRequestedSessionId(),vcode, 2);
 
         // 往图片上画线也就是噪点
         for (int i = 0; i < 10; i++) {
@@ -110,12 +110,26 @@ public class LoginController {
      * @return
      */
     @PostMapping("/register")
-    public JSONObject register(@RequestBody UserEntity user) {
+    public JSONObject register(@RequestBody UserEntity user, HttpServletRequest request) {
+        //获取用户输入的验证码
+        Object captchaCode = request.getParameter("captchaCode");
+        if (UtilValidate.isEmpty(captchaCode))
+            return ResponseUtil.makeErrorResponse("请输入验证码!");
+        //获取缓存的验证码
+        String sessionCode = getCaptchaCode(request);
+        if (UtilValidate.isEmpty(sessionCode))
+            return ResponseUtil.makeErrorResponse("验证码未获取或已过期!");
+        if (!String.valueOf(captchaCode).equals(sessionCode))
+            return ResponseUtil.makeErrorResponse("验证码错误!");
+
         String userName = user.getUserName();
         if (UtilValidate.isEmpty(userName))
             return ResponseUtil.makeErrorResponse("用户名不能为空!");
         if (!PatternUtils.checkUserName(userName))
             return ResponseUtil.makeErrorResponse("用户名格式错误,必须以字母开头，长度为5~16位，只允许包含字母、数字或下划线!");
+        if (userService.existsByUserName(userName))
+            return ResponseUtil.makeErrorResponse("用户名已存在!");
+
 
         String password = user.getPassword();
         if (UtilValidate.isEmpty(password))
@@ -126,7 +140,12 @@ public class LoginController {
         String nickName = user.getNickName();
         if (UtilValidate.isEmpty(nickName))
             return ResponseUtil.makeErrorResponse("昵称不能为空!");
+        if (userService.existsByNickName(nickName))
+            return ResponseUtil.makeErrorResponse("昵称已存在!");
 
+        String phone = user.getPhone();
+        if (UtilValidate.isNotEmpty(phone) && userService.existsByPhone(phone))
+            return ResponseUtil.makeErrorResponse("该手机号以注册!");
 
         //生成salt
         user.setSalt(UUID.randomUUID().toString().substring(0, 5));
@@ -143,13 +162,14 @@ public class LoginController {
     }
 
     private String getCaptchaCode(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        Object codeObj = session.getAttribute(captchaKey);
+        //session版本获取验证码
+        /*HttpSession session = request.getSession();
+        Object codeObj = session.getAttribute(captchaKey);*/
+
+        //redis版本获取验证码
+        Object codeObj = RedisUtils.get(request.getRequestedSessionId());
+
         return UtilValidate.isEmpty(codeObj) ? null : String.valueOf(codeObj);
     }
 
-    private void removeCaptchaCode(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        session.removeAttribute(captchaKey);
-    }
 }

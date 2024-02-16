@@ -4,7 +4,7 @@ spring:
   redis:
     host: 127.0.0.1
     port: 6379
-    database: 1
+    database: 0
     timeout: 5000
     password:
     lettuce:
@@ -58,8 +58,6 @@ server:
 log4j2:
   logging:
     config: classpath:log4j2.yml
-    level:
-      root: INFO
 
 lc:
   config:
@@ -67,7 +65,7 @@ lc:
     login:
       loginErrorCount: 5
       errorExpMinutes: 5
-      captchaKey: code
+#      captchaKey: code #session存验证码用 现以更变为redis requestId过期存储
       errorKey: err_
       stopLoginKey: stop_
     # 雪花算法 id生成规则相关
@@ -76,6 +74,8 @@ lc:
       datacenterId: 1
       # 自定义机器标识 设置小于5位
       machineId: 1
+#    mybatis-plus:
+#      sqlShow: true
 
 
 

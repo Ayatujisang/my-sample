@@ -23,15 +23,15 @@ public class AutoFillHandler implements MetaObjectHandler {
         //  > 键入metaObject,字段名,Supplier参数 需要一个有返回值的函数作为参数,上一个参数返回值的class
         this.strictInsertFill(metaObject, "createTime", () -> new Date(), Date.class);
         this.strictInsertFill(metaObject, "updateTime", () -> new Date(), Date.class);
-        this.strictInsertFill(metaObject, "createUserId", () -> LoginUserUtils.getLoginUserId(), Long.class);
-        this.strictInsertFill(metaObject, "lastUpdateUserId", () -> LoginUserUtils.getLoginUserId(), Long.class);
+//        this.strictInsertFill(metaObject, "createUserId", () -> LoginUserUtils.getLoginUserId(), Long.class);
+//        this.strictInsertFill(metaObject, "lastUpdateUserId", () -> LoginUserUtils.getLoginUserId(), Long.class);
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
         this.strictInsertFill(metaObject, "createTime", () -> new Date(), Date.class);
         this.strictInsertFill(metaObject, "updateTime", () -> new Date(), Date.class);
-        this.strictInsertFill(metaObject, "createUserId", () -> LoginUserUtils.getLoginUserId(), Long.class);
+//        this.strictInsertFill(metaObject, "createUserId", () -> LoginUserUtils.getLoginUserId(), Long.class);
         this.strictInsertFill(metaObject, "lastUpdateUserId", () -> LoginUserUtils.getLoginUserId(), Long.class);
     }
 }

@@ -27,6 +27,9 @@ public class UserEntity {
     @TableField(value = "nick_name", insertStrategy = FieldStrategy.NOT_NULL, updateStrategy = FieldStrategy.NOT_NULL)
     private String nickName;
 
+    @TableField(value = "phone")
+    private String phone;
+
     @TableField(value = "salt", insertStrategy = FieldStrategy.NOT_NULL)
     private String salt;
 
@@ -43,10 +46,10 @@ public class UserEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
 
-    @TableField(value = "create_user_id", fill = FieldFill.INSERT_UPDATE)
-    private Long createUserId;
+/*    @TableField(value = "create_user_id", fill = FieldFill.INSERT_UPDATE)
+    private Long createUserId;*/
 
-    @TableField(value = "last_update_user_id", fill = FieldFill.INSERT_UPDATE)
+    @TableField(value = "last_update_user_id", fill = FieldFill.UPDATE, updateStrategy = FieldStrategy.NOT_NULL)
     private Long lastUpdateUserId;
 
 }

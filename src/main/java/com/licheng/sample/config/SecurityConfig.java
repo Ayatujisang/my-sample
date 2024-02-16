@@ -15,13 +15,15 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
  */
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    //登录的请求地址
-    private static final String LOGIN_PATH = "/login";
+    //登录的请求地址 /**标识放行包含此url的全部资源地址
+    private static final String LOGIN_PATH = "/login/**";
 
     //登出的请求地址
     private static final String LOGOUT_PATH = "/logout";
 
+    //登录失败次数过多跳转的地址
     private static final String LOGIN_ERROR_PATH = "/login?error";
+
 
     /**
      * 注册浏览器请求拦截策略
@@ -53,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 //antMatchers() 键入需要请求地址  permitAll()放行
                 .antMatchers("/actuator/**", "/oauth/authorize", "/oauth/confirm_access",
-                        "/captchaCode", LOGIN_PATH, LOGOUT_PATH, LOGIN_ERROR_PATH)
+                        "/captchaCode", LOGIN_PATH, LOGOUT_PATH)
                 .permitAll()
                 //anyRequest() 任意请求 authenticated()需要被鉴权
                 .anyRequest().authenticated()
@@ -68,7 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage(LOGIN_PATH)
 
                 //defaultSuccessUrl()登入成功跳转的路径
-//                .defaultSuccessUrl("/home")
+                .defaultSuccessUrl("/login/success")
 
                 //failureHandler() 登入失败的处理
                 .failureHandler(new ErrorLoginHandler(LOGIN_ERROR_PATH))

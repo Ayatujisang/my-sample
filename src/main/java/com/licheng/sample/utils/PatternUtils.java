@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 public class PatternUtils {
 
-    //用户名 母开头，允许5-16字节，允许字母数字下划线
+    //用户名 字母开头，允许5-16字节，允许字母数字下划线
     public static final String USER_NAME = "^[a-zA-Z][a-zA-Z0-9_]{4,15}$";
 
     /**

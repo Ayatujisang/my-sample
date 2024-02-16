@@ -3,6 +3,7 @@ package com.licheng.sample.controller;
 import com.alibaba.fastjson2.JSONObject;
 import com.licheng.sample.entity.UserEntity;
 import com.licheng.sample.service.UserService;
+import com.licheng.sample.utils.AESUtils;
 import com.licheng.sample.utils.PatternUtils;
 import com.licheng.sample.utils.ResponseUtil;
 import com.licheng.sample.utils.UtilValidate;
@@ -129,6 +130,8 @@ public class LoginController {
 
         //生成salt
         user.setSalt(UUID.randomUUID().toString().substring(0, 5));
+        //密码加密
+        user.setPassword(AESUtils.AESEncode(user.getPassword(), user.getSalt()));
 
         try {
             userService.createUser(user);

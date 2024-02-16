@@ -2,6 +2,7 @@ package com.licheng.sample.config;
 
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 
 /*
  * @author LiCheng
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
  *
  * mybatilsPlus的自定义主键生成工具
  */
+@Configuration
 public class PrimaryKeyGenerator implements IdentifierGenerator  {
 
     @Override
@@ -59,7 +61,7 @@ public class PrimaryKeyGenerator implements IdentifierGenerator  {
     /**
      * 构造方法 校验配置文件中配置的参数是否超过限制
      */
-    private PrimaryKeyGenerator() {
+    public PrimaryKeyGenerator() {
         if (DATA_CENTER_ID > MAX_DATACENTER_NUM || DATA_CENTER_ID < 0) {
             throw new IllegalArgumentException("Datacenter Id cannot be greater than " + MAX_DATACENTER_NUM + " or less than 0");
         }

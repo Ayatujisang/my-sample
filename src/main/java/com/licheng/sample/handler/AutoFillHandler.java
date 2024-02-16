@@ -3,6 +3,7 @@ package com.licheng.sample.handler;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.licheng.sample.utils.LoginUserUtils;
 import org.apache.ibatis.reflection.MetaObject;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
@@ -13,6 +14,7 @@ import java.util.Date;
  * mybatils-plus db操作时自动注入类属性的处理类
  */
 @SuppressWarnings("all")
+@Component
 public class AutoFillHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {

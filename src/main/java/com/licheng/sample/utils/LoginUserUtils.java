@@ -28,7 +28,7 @@ public class LoginUserUtils {
      */
     public static Long getLoginUserId() {
         UserEntity userEntity = getLoginUser();
-        return userEntity.getCreateUserId();
+        return userEntity.getUid();
 
     }
 

@@ -14,7 +14,7 @@ spring:
         min-idle: 0
         max-idle: 20
   application:
-    name: logSpEL
+    name: my-sample
   security:
     user:
       password: none
@@ -53,7 +53,7 @@ spring:
 server:
   port: 8001
   servlet:
-    context-path: /log
+    context-path: /sample
 
 log4j2:
   logging:

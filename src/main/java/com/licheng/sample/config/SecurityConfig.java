@@ -2,8 +2,10 @@ package com.licheng.sample.config;
 
 import com.licheng.sample.handler.ErrorLoginHandler;
 import com.licheng.sample.handler.LogoutSuccessHandler;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -13,10 +15,13 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
  *
  * Spring-security配置类
  */
+
+@Configuration
+@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     //登录的请求地址 /**标识放行包含此url的全部资源地址
-    private static final String LOGIN_PATH = "/login/**";
+    private static final String LOGIN_PATH = "/login";
 
     //登出的请求地址
     private static final String LOGOUT_PATH = "/logout";
@@ -50,12 +55,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
          * addFilterBefore 前拦截 传入 需要前置的拦截器和滞后目标的class
          *  > 例如: addFilterBefore(new LoginFilter("/login"), UsernamePasswordAuthenticationFilter.class)
          */
-
-        //authorizeRequests() 配置http请求为鉴权请求
-        http.authorizeRequests()
+        //关闭csrf 防止因默认csrf策略导致post请求404
+        http.csrf().disable()
+                //不允许iframe嵌套 防止被其他非本地站点引用嵌套
+                .headers().frameOptions().disable()
+                .and()
+                //authorizeRequests() 配置http请求为鉴权请求
+                .authorizeRequests()
                 //antMatchers() 键入需要请求地址  permitAll()放行
                 .antMatchers("/actuator/**", "/oauth/authorize", "/oauth/confirm_access",
-                        "/captchaCode", LOGIN_PATH, LOGOUT_PATH)
+                        "/captchaCode", LOGIN_PATH + "/**", LOGOUT_PATH)
                 .permitAll()
                 //anyRequest() 任意请求 authenticated()需要被鉴权
                 .anyRequest().authenticated()
@@ -66,8 +75,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //formLogin() 配置需要通过表单登入
                 .formLogin()
 
-                //loginPage() 登录的地址
-                .loginPage(LOGIN_PATH)
+                // loginPage() 登录的地址
+                //  > 如果配置了此地址 所有非get请求都会默认先去访问设定的目标地址
+                //    此配置设定后若该地址无法访问 则会默认所有非get请求404 配置的放行地址也无效
+                //    出现这个问题和csrf拦截很像但不是一个问题
+//                .loginPage(LOGIN_PATH)
 
                 //defaultSuccessUrl()登入成功跳转的路径
                 .defaultSuccessUrl("/login/success")
@@ -98,14 +110,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/login", "redirect"))
 
                 .permitAll();
-
-
-        //关闭csrf
-        http.csrf().disable();
-        //关闭iframe嵌套
-        http.headers().frameOptions().disable();
     }
-
 
 
 }

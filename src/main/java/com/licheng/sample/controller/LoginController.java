@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -38,6 +39,7 @@ public class LoginController {
 
     @RequestMapping("/success")
     public JSONObject loginSuccess() {
+        List<UserEntity> userEntities = userService.selectAll();
         return ResponseUtil.makeSuccessResponse("登录成功");
     }
 

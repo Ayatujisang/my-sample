@@ -15,7 +15,7 @@ import java.util.Date;
  */
 @Data
 @TableName("app")
-public class AppEntity {
+public class AppEntity extends BaseEntity {
 
     @TableId(value = "appId", type = IdType.ASSIGN_ID)
     private Long appId;

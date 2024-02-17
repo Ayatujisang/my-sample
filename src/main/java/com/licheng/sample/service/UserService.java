@@ -6,6 +6,8 @@ import com.licheng.sample.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /*
  * @author LiCheng
  * @date  2024-02-16 19:29:18
@@ -46,5 +48,9 @@ public class UserService {
     public boolean existsByPhone(String phone) {
         return userMapper.exists(new QueryWrapper<UserEntity>().lambda()
                 .eq(UserEntity::getPhone, phone));
+    }
+
+    public List<UserEntity> selectAll(){
+        return userMapper.selectList(null);
     }
 }

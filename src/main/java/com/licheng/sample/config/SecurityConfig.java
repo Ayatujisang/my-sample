@@ -3,12 +3,15 @@ package com.licheng.sample.config;
 import com.licheng.sample.filter.JwtAuthencationTokenFilter;
 import com.licheng.sample.handler.ErrorLoginHandler;
 import com.licheng.sample.handler.LogoutSuccessHandler;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -33,6 +36,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     //登录失败次数过多跳转的地址
     private static final String LOGIN_ERROR_PATH = "/login?error";
+
+    /**
+     * 单点认证服务的服务器处理密码方式
+     * 由于默认的passwordEncoder接口不允许动态添加salt 这里不使用
+     *
+     * @return
+     */
+/*
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+*/
 
 
     /**

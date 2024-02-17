@@ -3,6 +3,7 @@ package com.licheng.sample.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.Date;
  */
 @Data
 @TableName("sys_user")
+@ToString
 public class UserEntity extends BaseEntity{
     //type = IdType.ASSIGN_ID 标识使用默认的雪花算法进行主键生成
     // > 此算法可以被实现了IdentifierGenerator接口的自定义类重写 重写后此配置相当于使用自定义生成策略

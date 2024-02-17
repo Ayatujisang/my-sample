@@ -3,7 +3,11 @@ package com.licheng.sample.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.licheng.sample.entity.UserEntity;
 import com.licheng.sample.mapper.UserMapper;
+import com.licheng.sample.utils.UtilValidate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +20,7 @@ import java.util.List;
  */
 @SuppressWarnings("all")
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     @Autowired
     private UserMapper userMapper;
 
@@ -31,13 +35,13 @@ public class UserService {
 
     public UserEntity selectByUserName(String userName) {
         UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().lambda()
-                .eq(UserEntity::getUserName, userName));
+                .eq(UserEntity::getUsername, userName));
         return userEntity;
     }
 
     public boolean existsByUserName(String userName) {
         return userMapper.exists(new QueryWrapper<UserEntity>().lambda()
-                .eq(UserEntity::getUserName, userName));
+                .eq(UserEntity::getUsername, userName));
     }
 
     public boolean existsByNickName(String nickName) {
@@ -52,5 +56,14 @@ public class UserService {
 
     public List<UserEntity> selectAll(){
         return userMapper.selectList(null);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEntity userEntity = selectByUserName(username);
+        if(UtilValidate.isEmpty(userEntity))
+            return null;
+
+        return userEntity;
     }
 }

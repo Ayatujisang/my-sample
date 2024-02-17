@@ -7,7 +7,6 @@ import com.licheng.sample.utils.JwtUtils;
 import com.licheng.sample.utils.LoginUserUtils;
 import com.licheng.sample.utils.UtilContext;
 import com.licheng.sample.utils.UtilValidate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -93,7 +92,7 @@ public class JwtAuthencationTokenFilter extends OncePerRequestFilter {
         // 自定义数据源获取用户信息
         UserEntity userEntity = UtilContext.getBean("userService", UserService.class).selectByUserName(jwtUserName);
         // 验证token是否有效 验证token用户名和存储的用户名是否一致以及是否在有效期内, 重新设置用户对象
-        if (JwtUtils.verifyToken(accessToken, userEntity.getUserName(), userEntity.getPassword())) {
+        if (JwtUtils.verifyToken(accessToken, userEntity.getUsername(), userEntity.getPassword())) {
             // 重新将用户信息封装到UsernamePasswordAuthenticationToken
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userEntity, null, Lists.newArrayList());
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

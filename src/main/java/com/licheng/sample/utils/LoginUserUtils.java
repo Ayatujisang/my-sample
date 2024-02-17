@@ -80,7 +80,7 @@ public class LoginUserUtils {
         // > 2. 直接拼接条件 传入的第一个参数是数据库中的列名而非实体类的属性名
         //      userMapper.selectOne(new QueryWrapper<UserEntity>().eq("user_name", userName));
         UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().lambda()
-                .eq(UserEntity::getUserName, loginUserName));
+                .eq(UserEntity::getUsername, loginUserName));
 
         if (UtilValidate.isEmpty(userEntity)) {
             throw new RuntimeException("获取当前登入用户的账户信息失败!");

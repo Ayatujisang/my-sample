@@ -1,4 +1,3 @@
-/*
 package com.licheng.sample.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -18,15 +17,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-*/
 /*
  * @author LiCheng
  * @date  2024-02-18 00:24:19
  *
  * App的service
  * 从数据库读取所有注册到认证中心的APP信息
- *//*
-
+ */
 @Service
 @SuppressWarnings("all")
 public class AppService implements ClientDetailsService, ClientRegistrationService {
@@ -53,7 +50,7 @@ public class AppService implements ClientDetailsService, ClientRegistrationServi
         AppEntity appEntity = appMapper.selectOne(new QueryWrapper<AppEntity>().lambda()
                 .eq(AppEntity::getClientId, clientId));
 
-        if(UtilValidate.isEmpty(appEntity))
+        if (UtilValidate.isEmpty(appEntity))
             return null;
 
         BaseClientDetails clientDetails = appToClientDetails(appEntity);
@@ -92,7 +89,7 @@ public class AppService implements ClientDetailsService, ClientRegistrationServi
         return collect;
     }
 
-        private static BaseClientDetails appToClientDetails(AppEntity app) {
+    private static BaseClientDetails appToClientDetails(AppEntity app) {
         BaseClientDetails clientDetails = new BaseClientDetails();
         //拼装clientDetails
         clientDetails.setClientId(app.getClientId());
@@ -106,8 +103,9 @@ public class AppService implements ClientDetailsService, ClientRegistrationServi
         clientDetails.setRefreshTokenValiditySeconds(refreshTokenExpTime);
         //配置作用域 这里默认给所有 不限制
         clientDetails.setScope(Lists.newArrayList("all"));
+        //跳过用户点击确认授权步骤
+        clientDetails.setAutoApproveScopes(Lists.newArrayList("all"));
         return clientDetails;
     }
 
 }
-*/

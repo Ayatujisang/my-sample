@@ -124,7 +124,7 @@ public class LoginController {
         if (!String.valueOf(captchaCode).equals(sessionCode))
             return ResponseUtil.makeErrorResponse("验证码错误!");
 
-        String userName = user.getUserName();
+        String userName = user.getUsername();
         if (UtilValidate.isEmpty(userName))
             return ResponseUtil.makeErrorResponse("用户名不能为空!");
         if (!PatternUtils.checkUserName(userName))

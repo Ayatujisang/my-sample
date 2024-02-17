@@ -29,42 +29,69 @@ public class LoginUserUtils {
     public static Long getLoginUserId() {
         UserEntity userEntity = getLoginUser();
         return userEntity.getUid();
-
     }
 
-    public static UserEntity getLoginUser() {
-        //从springSecurity的上下文中获取当前请求用户的认证信息
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    /**
+     * 验证用户是否登入
+     *
+     * @return
+     */
+    public static boolean checkUserLogin(String jwtUserName) {
+        return UtilValidate.isNotEmpty(getAuthentication()) &&
+                jwtUserName.equals(getLoginUserName());
+    }
 
-        if (authentication == null || authentication.getPrincipal() == null) {
-            throw new RuntimeException("获取当前登入用户的账户信息失败!");
-        }
+    /**
+     * 获取当前登录的用户名
+     *
+     * @return
+     */
+    public static String getLoginUserName() {
+        //从springSecurity的上下文中获取当前请求用户的认证信息
+        Authentication authentication = getAuthentication();
+        if (UtilValidate.isEmpty(authentication))
+            return null;
 
         Object principal = authentication.getPrincipal();
-        if (UtilValidate.isEmpty(principal)) {
-            throw new RuntimeException("获取当前登入用户的账户信息失败!");
-        }
+        if (UtilValidate.isEmpty(principal))
+            return null;
 
         String userName = null;
 
         try {
-            userName = String.valueOf(principal);
+            userName = java.lang.String.valueOf(principal);
         } catch (Exception e) {
-            throw new RuntimeException("获取当前登入用户的账户信息结果异常!");
+            return null;
         }
+
+        return userName;
+    }
+
+    /**
+     * 获取当前登录的用户实例
+     *
+     * @return
+     */
+    public static UserEntity getLoginUser() {
+        String loginUserName = getLoginUserName();
 
         //QueryWrapper 查询条件构造器 两种用法
         // > 1. lambda() 传入lambda表达式 直接使用对象和获取属性方法
         // > 2. 直接拼接条件 传入的第一个参数是数据库中的列名而非实体类的属性名
         //      userMapper.selectOne(new QueryWrapper<UserEntity>().eq("user_name", userName));
         UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().lambda()
-                .eq(UserEntity::getUserName, userName));
+                .eq(UserEntity::getUserName, loginUserName));
 
         if (UtilValidate.isEmpty(userEntity)) {
             throw new RuntimeException("获取当前登入用户的账户信息失败!");
         }
 
         return userEntity;
+    }
+
+
+    private static Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 
 }

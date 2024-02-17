@@ -1,5 +1,6 @@
 package com.licheng.sample.config;
 
+import com.licheng.sample.filter.JwtAuthencationTokenFilter;
 import com.licheng.sample.handler.ErrorLoginHandler;
 import com.licheng.sample.handler.LogoutSuccessHandler;
 import org.springframework.context.annotation.Configuration;
@@ -7,13 +8,17 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.util.List;
 
 /*
  * @author LiCheng
  * @date  2024-02-15 17:02:37
  *
- * Spring-security配置类
+ * 授权模式的配置类
  */
 
 @Configuration
@@ -55,12 +60,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
          * addFilterBefore 前拦截 传入 需要前置的拦截器和滞后目标的class
          *  > 例如: addFilterBefore(new LoginFilter("/login"), UsernamePasswordAuthenticationFilter.class)
          */
-        //关闭csrf 防止因默认csrf策略导致post请求404
+        // 1. 关闭csrf 防止因默认csrf策略导致post请求404
         http.csrf().disable()
+
+                // 2. 标头设置
+                .headers()
                 //不允许iframe嵌套 防止被其他非本地站点引用嵌套
-                .headers().frameOptions().disable()
+                .frameOptions().disable()
+                //禁用HTTP响应标头进行缓存
+                .cacheControl().disable()
+
+                //and() 在and()前配置的条件生效的同时添加其他条件
                 .and()
-                //authorizeRequests() 配置http请求为鉴权请求
+
+                // 3. 基于jwt认证 将session设置为无状态
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+                .and()
+
+                // 4. 配置JWT前拦截 在用户名密码认证服务前
+                .addFilterBefore(new JwtAuthencationTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+
+                // 5. authorizeRequests() 配置鉴权请求
                 .authorizeRequests()
                 //antMatchers() 键入需要请求地址  permitAll()放行
                 .antMatchers("/actuator/**", "/oauth/authorize", "/oauth/confirm_access",
@@ -68,10 +90,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 //anyRequest() 任意请求 authenticated()需要被鉴权
                 .anyRequest().authenticated()
-
-                //and() 在and()前配置的条件生效的同时添加其他条件
                 .and()
-
                 //formLogin() 配置需要通过表单登入
                 .formLogin()
 

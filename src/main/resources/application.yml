@@ -26,13 +26,6 @@ spring:
   cloud:
     services:
       registrationMethod: route
-  jpa:
-    show-sql: false
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.Oracle10gDialect
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource #使用druid数据源，替换C3P0
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -59,15 +52,36 @@ log4j2:
   logging:
     config: classpath:log4j2.yml
 
+# oauth2相关配置
+security:
+  oauth2:
+    client:
+      clientId: mySample
+      clientSecret: mySampleSecret
+    resource:
+      id: trust
+      jwt:
+        keyValue: |
+          -----BEGIN CERTIFICATE-----
+          MIIEPzCCAqegAwIBAgIIb18YO0XZSVswDQYJKoZIhvcNAQEMBQAwTjELMAkGA1UEBhMCbGMxCzAJBgNVBAgTAmxjMQswCQYDVQQHEwJsYzELMAkGA1UEChMCbGMxCzAJBgNVBAsTAmxjMQswCQYDVQQDEwJsYzAeFw0yNDAyMTcxMjEwMzRaFw0zNDAyMTQxMjEwMzRaME4xCzAJBgNVBAYTAmxjMQswCQYDVQQIEwJsYzELMAkGA1UEBxMCbGMxCzAJBgNVBAoTAmxjMQswCQYDVQQLEwJsYzELMAkGA1UEAxMCbGMwggGiMA0GCSqGSIb3DQEBAQUAA4IBjwAwggGKAoIBgQCb2IdJHPynYfOarCuQhQ9wU6ASTMeZ7KjE0CPmdiIn8s49sZKFisJoZRm8BXixUKXuNpGAvXA/zg2dsXCtRX98+PFZ51fx4kYUL3RU+OJ+iRBECeQEUUoBazfgD66SBELYccoB6nNeNhIWS5OsP7u1k/w7d9a8Qszh3F7rIIR9ugLSUqDVytp0ryZqKyO+yn4N6Uvau8wNyjzz+xsaL8+gqtoE+oVcgNjxuPXa+J/CgDuDqCDYsp0cZxIToRdQBSy4YL89ISbF3xwvqtkABD2uAe1JY2S4d6+bhgCwaPAvmRWOK+dic6nkdYf05W/uaN6uZSldMr4ltZnG4t4rbHlwWNyyL+gblzNWuhQkoieZL4Gwg5wUowKeUWozEDmN9m9FBH4yzCFDEdIgVe5TaXR7lXv63bbexknAnhBD0tatpcx4OerOEse5wZPBHcKsmE2Y/EVt5eO1lN2taR65jHeAqsf2qRiMFEIB56IV2GK/c62PR8PbyjJdk6sjSWOT2K8CAwEAAaMhMB8wHQYDVR0OBBYEFKsq2tg1RFaohbSkKLmY1zB388PMMA0GCSqGSIb3DQEBDAUAA4IBgQBfDOCHW49l3SN6UBlqAaMPRSs5fHiOC+QJ0+q7xsPEhIrJTqnnhDDyn3mhee2pSHCJN0/0m6M+yM6qVkGz9PTc0AOIH/9CS2/Mf6Jwl34LAKjFUypRgbLD08P/P1CfKTUn0pms7fNDzQi9YAMdERTRwD9VbJ77+WfIYLpy7SXy9TArfhVey1rHyLXhx2ayC2NZOC/71mIIyovUs5KM9DUkBlkhllE898O5r3wEgNVVuXGdT59D1I93X78kWl8tezcE1m8yGkG7pHrmdwyYeZbbz6Zz5uBFAVQnesNo/uI8xkMVmMKH29R4vM/M4/XGnz0dbOqcz3NXbcsVo1r3MUp6jJCZoGW6pXX0BgBGYL4RaRChtHqFpGcvqcxxd5kKq0YVYplk5UKGeiTKFVHSd5qBHA14syM+ZYbxLFnTu0Y4wL6j3ef3lJFVRrT7I3ShyavWYjCMKETlB3Vf+EDsvYXUVgXrZg973TrSyjP8e2OpjypGD6eBDEZ0GmyLP1Ek5Gs=
+          -----END CERTIFICATE-----
+
 lc:
   config:
     # 登录相关配置
     login:
       loginErrorCount: 5
       errorExpMinutes: 5
-#      captchaKey: code #session存验证码用 现以更变为redis requestId过期存储
+      #      captchaKey: code #session存验证码用 现以更变为redis requestId过期存储
       errorKey: err_
       stopLoginKey: stop_
+      jwt:
+        accessKey: jaccess_
+        refreshKey: jrefresh_
+        accessTokenPrefix: access_
+        refreshTokenPrefix: refresh_
+        accessTokenExpMinutes: 5
+        refreshTokenExpMinutes: 60
     # 雪花算法 id生成规则相关
     idWork:
       # 自定义数据中心标识 设置小于5位

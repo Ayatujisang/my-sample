@@ -2,14 +2,11 @@ package com.licheng.sample.filter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
+import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,12 +15,14 @@ import java.net.URISyntaxException;
 
 /*
  * @author LiCheng
- * @date  2024-02-16 22:16:03
+ * @date  2024-02-17 22:05:25
  *
- * Cors拦截器 这里默认允许所有请求头跨域访问
+ * 覆盖spring原生的corsDomianFilter
  */
-public class CorsDomainFilter extends CorsFilter {
+public class CorsDomainFilter extends CorsFilter implements Ordered {
     private Logger logger = LoggerFactory.getLogger(CorsDomainFilter.class);
+
+    private int order = -2147483648;
 
     public CorsDomainFilter(CorsConfigurationSource configSource) {
         super(configSource);
@@ -51,20 +50,8 @@ public class CorsDomainFilter extends CorsFilter {
         return false;
     }
 
-    private CorsConfiguration buildConfig() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.addAllowedOrigin("*"); // 允许任何域名使用
-        corsConfiguration.addAllowedHeader("*"); // 允许任何头
-        corsConfiguration.addAllowedMethod("*"); // 允许任何方法（post、get等）
-        corsConfiguration.setAllowCredentials(true);
-        return corsConfiguration;
-    }
-
-    @Bean
-    public CorsDomainFilter corsDomainFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", buildConfig());
-        logger.info("use CorsDomainFilter for corsDomain setting.");
-        return new CorsDomainFilter(source);
+    @Override
+    public int getOrder() {
+        return order;
     }
 }
